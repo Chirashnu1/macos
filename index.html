@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+  <meta charset="UTF-8">
+  <title>Untitled</title>
+  <link rel="stylesheet" href="./style.css">
+
+</head>
+<body>
+<!-- partial:index.partial.html -->
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>macOS Glassmorphism Portfolio</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    
+    /* ===== BASE STYLES ===== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --container-width: 90%;
+      --container-height: 90%;
+      --glass-bg: rgba(0, 0, 0, 0.3);
+      --blur: 20px;
+      --button-hover: rgba(255, 255, 255, 0.1);
+      --text-color: #fff;
+    }
+
+    html {
+      font-size: 62.5%;
+    }
+
+    body {
+      background: url("https://4kwallpapers.com/images/wallpapers/macos-big-sur-apple-layers-fluidic-colorful-dark-wwdc-2020-3840x2160-1432.jpg") no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Poppins", sans-serif;
+      color: var(--text-color);
+    }
+
+    .container {
+      width: var(--container-width);
+      height: var(--container-height);
+      background: var(--glass-bg);
+      backdrop-filter: blur(var(--blur));
+      border-radius: 20px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+      position: relative;
+      display: none; /* Hidden until loader completes */
+    }
+
+    header {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      padding: 10px 20px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 99;
+    }
+
+    .window--buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .window__close, .window__minimize, .window__maximize {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      transition: 0.3s ease;
+    }
+
+    .window__close { background: #ff5f57; }
+    .window__minimize { background: #ffbd2e; }
+    .window__maximize { background: #28c840; }
+
+    .window--buttons div:hover {
+      transform: scale(1.2);
+      cursor: pointer;
+    }
+
+    aside {
+      width: 220px;
+      padding-top: 60px;
+      padding-left: 15px;
+      background: rgba(0, 0, 0, 0.25);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    aside button {
+      width: 90%;
+      padding: 12px;
+      margin-bottom: 10px;
+      background: none;
+      border: none;
+      color: var(--text-color);
+      text-align: left;
+      font-size: 1.5rem;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    aside button:hover,
+    aside button.active {
+      background: var(--button-hover);
+    }
+
+    .content {
+      flex: 1;
+      padding: 70px 30px 30px 30px;
+      overflow-y: auto;
+      height: 100%;
+      display: none;
+    }
+
+    .content.active {
+      display: block;
+    }
+
+    .content h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+
+    .content p {
+      font-size: 1.6rem;
+      margin-bottom: 10px;
+    }
+
+    ul {
+      padding-left: 20px;
+    }
+
+    ul li {
+      margin-bottom: 5px;
+      font-size: 1.5rem;
+    }
+
+    .content::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .content::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 5px;
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+      }
+
+      aside {
+        width: 100%;
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        padding: 10px 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      aside button {
+        width: auto;
+        font-size: 1.2rem;
+        padding: 10px 15px;
+      }
+
+      .content {
+        padding: 20px;
+      }
+    }
+
+    /* ====== LOADER STYLES ====== */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.5s ease;
+    }
+
+    .spinner {
+      position: relative;
+      width: 75px;
+      height: 75px;
+    }
+
+     .spinner-blade {
+      position: absolute;
+      left: 0.4629em;
+      bottom: 0;
+      width: 0.074em;
+      height: 0.2777em;
+      border-radius: 0.5em;
+      background-color: transparent;
+      transform-origin: center -0.2222em;
+      animation: spinner-fade 1s infinite linear;
+    }
+    }
+
+    @keyframes spinner-fade {
+      0%   { background-color: #69717d; }
+      100% { background-color: transparent; }
+    }
+
+    .spinner-blade:nth-child(1)  { transform: rotate(0deg);   animation-delay: 0s; }
+    .spinner-blade:nth-child(2)  { transform: rotate(30deg);  animation-delay: 0.083s; }
+    .spinner-blade:nth-child(3)  { transform: rotate(60deg);  animation-delay: 0.166s; }
+    .spinner-blade:nth-child(4)  { transform: rotate(90deg);  animation-delay: 0.249s; }
+    .spinner-blade:nth-child(5)  { transform: rotate(120deg); animation-delay: 0.332s; }
+    .spinner-blade:nth-child(6)  { transform: rotate(150deg); animation-delay: 0.415s; }
+    .spinner-blade:nth-child(7)  { transform: rotate(180deg); animation-delay: 0.498s; }
+    .spinner-blade:nth-child(8)  { transform: rotate(210deg); animation-delay: 0.581s; }
+    .spinner-blade:nth-child(9)  { transform: rotate(240deg); animation-delay: 0.664s; }
+    .spinner-blade:nth-child(10) { transform: rotate(270deg); animation-delay: 0.747s; }
+    .spinner-blade:nth-child(11) { transform: rotate(300deg); animation-delay: 0.830s; }
+    .spinner-blade:nth-child(12) { transform: rotate(330deg); animation-delay: 0.913s; }
+  </style>
+</head>
+<body>
+
+ <!-- Loader Overlay -->
+<div class="overlay" id="loader">
+  <div class="spinner center">
+    <!-- 12 blades -->
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+    <div class="spinner-blade"></div>
+  </div>
+</div>
+
+
+  <!-- Portfolio Container -->
+  <div class="container">
+    <header>
+      <div class="window--buttons">
+        <div class="window__close"></div>
+        <div class="window__minimize"></div>
+        <div class="window__maximize"></div>
+      </div>
+    </header>
+
+    <header>
+  <div class="window--buttons">
+    <div class="window__close"></div>
+    <div class="window__minimize"></div>
+    <div class="window__maximize"></div>
+  </div>
+</header>
+
+    <header>
+  <div class="window--buttons">
+    <div class="window__close"></div>
+    <div class="window__minimize"></div>
+    <div class="window__maximize"></div>
+  </div>
+</header>
+
+<aside>
+  <button class="active" onclick="showSection('about')">About Me</button>
+  <button onclick="showSection('skills')">Skills</button>
+  <button onclick="showSection('experience')">Experience</button>
+  <button onclick="showSection('projects')">Projects</button>
+  <button onclick="showSection('contact')">Contact</button>
+  
+</aside>
+
+<!-- About Me Section -->
+    
+<div class="content active" id="about">
+  <h1>About Me</h1>
+  <p>
+    hello! I am <span class="glow-text">Chirashnu Das</span>, a motivated engineering student at<span class="glow-text"> NIT DURGAPUR</span> with strong skills in AI, Python, and <span class="glow-text">Machine Learning</span> . Experienced in building real-world applications using React, Node.js, and modern frameworks. Eager to contribute by developing intelligent, scalable solutions and supporting the company’s innovation in AI-driven <span class="glow-text">software development, automation, and user-centric applications.
+    
+  </p>
+    <p>I have a strong foundation in problem-solving, which has enabled me to excel in competitive programming and hackathons. I am passionate about learning new technologies and staying updated with the latest trends in <span class="glow-text">AI</span> and <span class="glow-text">Machine Learning</span>. Throughout my academic journey at <span class="glow-text">NIT Durgapur</span>, I have worked on various projects ranging from predictive models to automation tools that address real-world problems.
+
+My hands-on experience with <span class="glow-text">Python</span> and its libraries such as <span class="glow-text">TensorFlow</span>, <span class="glow-text">Keras</span>, and <span class="glow-text">Scikit-learn</span> has given me the ability to design, implement, and optimize <span class="glow-text">AI models</span> for various applications. Additionally, my expertise in <span class="glow-text">front-end</span> and <span class="glow-text">back-end</span> development allows me to contribute effectively to <span class="glow-text">full-stack development</span>, ensuring seamless user experiences.
+</p>
+ 
+</div>
+
+
+<!-- Skills Section -->
+<div class="content" id="skills">
+  <h1>Skills</h1>
+  <ul>
+    <li><strong>Languages:</strong> <span class="glow-text">React, Node.js,Python, C++, C, MATLAB,  html , css , java script    </li>
+    <li><strong>Frameworks:</strong> <span class="glow-text">OpenCV, Keras, PyTorch, MediaPipe, tensor flow ,Pandas, NumPy </li>
+    <li><strong>	Specializations:</strong> <span class="glow-text">Machine Learning, Computer Vision, AR/VR, Data Analysis  </li>
+    <li><strong>Tools:</strong><span class="glow-text"> Git, Power BI, Figma, VS Code</li>
+      <li><strong>Soft Skills:</strong><span class="glow-text"> Strong in communication, problem-solving, teamwork, adaptability, time management</li>
+      
+      
+  </ul>
+</div>
+
+  
+<!-- Experience Section -->
+<div class="content" id="experience">
+  <h1>Experience</h1>
+  <ul>
+    <li><strong><span class="glow-text">Robotics-Academy Remote Contributor, Computer Vision & WebRTC  :</span> </strong> At Robotics-Academy, I contributed remotely by updating deprecated vision modules like ColorFilter and OpticalFlow using OpenCV, and integrating WebRTC for real-time camera streaming within browser-based robotics environments. I closely collaborated with robotics researchers to ensure the deployment-readiness of educational simulations</li>
+    <li><strong><span class="glow-text">CSIR-CMERI (Intern) Computer Vision Intern, Real-Time Hand Tracking  :</span> </strong> As a Computer Vision Intern at CMERI, I developed a real-time hand-tracking system using OpenCV and Keras, tailored for medical rehabilitation. The project included gesture recognition features to assist with post-injury hand exercises, and I delivered a working prototype that supported therapists and patients in monitoring recovery progress.  .</li>
+    <li><strong><span class="glow-text">Frameboxx Power BI Project:</span> </strong> CThe Frameboxx Company Data Analysis project focuses on analyzing the company’s course, software, and semester data to identify patterns, trends, and key performance indicators (KPIs) that can drive operational efficiency and business growth. By leveraging data visualization tools like Power BI, the project provides an in-depth look at the company’s operations, helping Frameboxx make data-driven decisions regarding course offerings, software investments, and semester planning.</li>
+    <li><strong><span class="glow-text">Blinkit Sales Analysis:</span> </strong> The analysis provides Blinkit with valuable insights into their sales performance and customer behavior, allowing them to make informed decisions for growth. The project also highlights areas for improving user experience, optimizing inventory management, and refining marketing campaigns, ensuring Blinkit remains competitive in the rapidly growing online grocery market..</li>
+  </ul>
+</div>
+
+<!-- Projects Section -->
+<div class="content" id="projects">
+  <h1>Projects</h1>
+  <ul>
+    <li><strong><span class="glow-text">AR Hand Tracking Game:</strong> An augmented reality game using MediaPipe, OpenCV, and Python.</li>
+    <li><strong><span class="glow-text">Skin Cancer Detection:</strong> CNN model trained to detect skin lesions from images (TensorFlow).</li>
+    <li><strong><span class="glow-text">Computer Vision Exercises</strong>Improved deprecated exercises like ColorFilter and OpticalFlow Teleoperator using OpenCV. .</li>
+    <li><strong><span class="glow-text">Micro Collection Partner System:</strong> Web + mobile system for logistics tracking and smart wallet handling.</li>
+    <li><strong><span class="glow-text">MacOS Portfolio:</strong> Animated portfolio with glassmorphism, loading screen, and interactive navigation.</li>
+      <li><strong><span class="glow-text">AR Based game:</strong> Developed an AR-style game with hand tracking where players shoot balls from the index finger to destroy moving enemies.
+        
+
+</li>
+        <li><strong><span class="glow-text">Product Sales Analysis:</strong> Analyzed product sales data categorized by ship state and city using Power BI to determine sales patterns and product performance.
+  </ul>
+</div>
+
+<!-- Contact Section -->
+<div class="content" id="contact">
+  <h1>Contact</h1>
+  <p><strong>Email:</strong> chirashnudas@gmail.com</p>
+  <p><strong>Phone:</strong> 8240182308</p>
+  <p><strong>GitHub:</strong> <a href="https://github.com/chirashnu1" target="_blank">github.com/chirashnu1</a></p>
+  <p><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/chirashnudas" target="_blank">chirashnu das</a></p>
+  <p><strong>Location:</strong> NIT Durgapur, West Bengal</p>
+</div>
+  
+
+
+  <!-- JavaScript -->
+  <script>
+    // Loader logic
+    window.addEventListener("load", () => {
+      const overlay = document.querySelector(".overlay");
+      const container = document.querySelector(".container");
+
+      overlay.style.opacity = "0";
+
+      setTimeout(() => {
+        overlay.style.display = "none";
+        container.style.display = "flex";
+      }, 500);
+    });
+
+    // Section switching logic
+    function showSection(id) {
+      document.querySelectorAll('.content').forEach(c => c.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+
+      document.querySelectorAll('aside button').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+  </script>
+
+</body>
+</html>
+<!-- partial -->
+  <script  src="./script.js"></script>
+
+</body>
+</html>
